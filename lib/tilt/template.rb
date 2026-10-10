@@ -250,15 +250,17 @@ module Tilt
     CLASS_METHOD = Kernel.instance_method(:class)
     USE_BIND_CALL = RUBY_VERSION >= '3'
 
-    # Matches an embedded fixed locals magic comment, which must start its
-    # line, with only comment syntax such as <tt>-</tt>, <tt>/</tt>, or
-    # <tt>#{</tt> before it.
-    FIXED_LOCALS_REGEXP = /^[^\w\n]*\#\s*locals:\s*(\(.*\))/
+    # Matches an embedded fixed locals magic comment, with only non-word
+    # characters before it on its line.  The method argument string ends at
+    # the parenthesis matching its opening one.
+    FIXED_LOCALS_REGEXP = /^[^\w\n]*\#\s*locals:\s*(?<params>\((?:[^()\n]|\g<params>)*\))/
+    private_constant :FIXED_LOCALS_REGEXP
 
-    # Matches an embedded fixed locals magic comment in templates using ERB
-    # syntax, which must be the whole of an ERB comment tag.  The comment may
-    # span lines, but not continue past the end of its tag.
-    ERB_FIXED_LOCALS_REGEXP = /<%\#\s*locals:\s*(\((?:(?!%>).)*\))\s*-?%>/m
+    # Matches an embedded fixed locals magic comment opening an ERB comment
+    # tag.  The method argument string may span lines, but not continue past
+    # the end of the tag.
+    ERB_FIXED_LOCALS_REGEXP = /<%\#\s*locals:\s*(?<params>\((?:(?!%>)[^()]|\g<params>)*\))/
+    private_constant :ERB_FIXED_LOCALS_REGEXP
 
     # Execute the compiled template and return the result string. Template
     # evaluation is guaranteed to be performed in the scope object with the

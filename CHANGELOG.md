@@ -1,6 +1,7 @@
 ## master
 
-* Only extract embedded fixed locals from a magic comment starting its line, or in ERB templates, the whole of an ERB comment tag (parndt)
+* End extracted embedded fixed locals at the parenthesis matching the opening one, instead of the last parenthesis on the line (parndt)
+* Only extract embedded fixed locals from a magic comment with only non-word characters before it on its line, or in ERB, Erubi, and Herb templates, opening an ERB comment tag, which narrows what was previously extracted (parndt)
 * Do not change the encoding of the generated source code while checking it for a magic comment, fixing a race on first render in multithreaded code (UweKubosch)
 * Remove eval usage from Mapping#lazy_load (jeremyevans)
 * Do not allow a locals_keys entry that is not a string or a symbol (jeremyevans)

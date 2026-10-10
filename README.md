@@ -211,10 +211,12 @@ the form (whitespace around `locals:` is optional but recommended):
 # locals: ()
 ```
 
-The magic comment must start its line, with only comment syntax before it.
+Only non-word characters may come before the magic comment on its line.  The
+method argument string ends at the parenthesis matching its opening one, so
+text may follow it.
 
-In ERB templates (ERB, Erubi, and Herb), you can use the following comment
-format, which must be the whole of the comment tag, and may span lines:
+In ERB templates (ERB, Erubi, and Herb), the magic comment must open an ERB
+comment tag, and its method argument string may span lines within the tag:
 
 ```
 <%# locals: () %>

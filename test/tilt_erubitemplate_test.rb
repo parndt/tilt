@@ -212,11 +212,12 @@ DATA
     assert_equal "<p>Declare with &lt;%# locals: (name:) %&gt;</p>", template.render(nil).strip
   end
 
-  it "ends embedded fixed locals at the end of their ERB comment" do
+  it "ends embedded fixed locals at their matching parenthesis" do
     template = Tilt::ErubiTemplate.new { <<DATA }
-<%# locals: (name:) %> <%= name %> (see docs)
+<%# locals: (name: "foo".sub(/f/) { "b" }) the name (see docs) %> <%= name %> (see docs)
 DATA
-    assert_equal "bar (see docs)", template.render(nil, :name => "bar").strip
+    assert_equal "boo (see docs)", template.render(nil).strip
+    assert_raises(ArgumentError) { template.render(nil, :something => true) }
   end
 
   it "respects embedded fixed locals spanning lines" do

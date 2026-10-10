@@ -97,6 +97,15 @@ END
     end
   end
 
+  it "respects embedded fixed locals only in an ERB comment" do
+    template = Tilt::HerbTemplate.new { <<DATA }
+<%# locals: (name:) (see docs) %>
+&lt;%# locals: (title:) %&gt; <%= name %>
+DATA
+    assert_equal "&lt;%# locals: (title:) %&gt; bar", template.render(nil, name: "bar").strip
+    assert_raises(ArgumentError) { template.render(nil) }
+  end
+
   it "respects embedded fixed locals that are empty" do
     template = Tilt::HerbTemplate.new { <<DATA }
 <%# locals: () %>

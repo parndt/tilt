@@ -278,6 +278,14 @@ DATA
     assert_equal "Declare with # locals: (name:)", template.render(nil).strip
   end
 
+  it "ends embedded fixed locals at their matching parenthesis" do
+    template = Tilt::StringTemplate.new { <<'DATA' }
+#{# locals: (name: "foo".sub("f", "b")) (see docs)
+name}
+DATA
+    assert_equal "boo", template.render(nil).strip
+  end
+
   without_extract_fixed_locals "ignores embedded fixed locals when Tilt.extract_fixed_locals is false" do
     template = Tilt::StringTemplate.new { <<'DATA' }
 #{# locals: ()

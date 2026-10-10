@@ -201,6 +201,15 @@ describe 'tilt/erb (compiled)' do
     assert_equal "\nhello\n", template.render(_Scope.new)
   end
 
+  it "respects embedded fixed locals only in an ERB comment" do
+    template = Tilt::ERBTemplate.new { <<DATA }
+<%# locals: (name:) (see docs) %>
+&lt;%# locals: (title:) %&gt; <%= name %>
+DATA
+    assert_equal "&lt;%# locals: (title:) %&gt; bar", template.render(nil, :name => "bar").strip
+    assert_raises(ArgumentError) { template.render(nil) }
+  end
+
   it "encoding with source_encoding" do
     f = Tempfile.open("template")
     f.puts('ふが <%= @hoge %>')
