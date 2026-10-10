@@ -84,5 +84,11 @@ module Tilt
     def freeze_string_literals?
       @freeze_string_literals
     end
+
+    private
+
+    def fixed_locals_regexp
+      ERB_FIXED_LOCALS_REGEXP
+    end
   end
 end

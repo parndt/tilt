@@ -205,6 +205,31 @@ DATA
     assert_raises(ArgumentError) { template.render(nil, :something => true) }
   end
 
+  it "ignores the fixed locals syntax outside an ERB comment" do
+    template = Tilt::ErubiTemplate.new { <<DATA }
+<p>Declare with &lt;%# locals: (name:) %&gt;</p>
+DATA
+    assert_equal "<p>Declare with &lt;%# locals: (name:) %&gt;</p>", template.render(nil).strip
+  end
+
+  it "ends embedded fixed locals at the end of their ERB comment" do
+    template = Tilt::ErubiTemplate.new { <<DATA }
+<%# locals: (name:) %> <%= name %> (see docs)
+DATA
+    assert_equal "bar (see docs)", template.render(nil, :name => "bar").strip
+  end
+
+  it "respects embedded fixed locals spanning lines" do
+    template = Tilt::ErubiTemplate.new { <<DATA }
+<%#
+  locals: (name:,
+           title: "foo")
+%>
+<%= name %> <%= title %>
+DATA
+    assert_equal "bar foo", template.render(nil, :name => "bar").strip
+  end
+
   without_extract_fixed_locals "ignores embedded fixed locals when Tilt.extract_fixed_locals is false" do
     template = Tilt::ErubiTemplate.new { <<DATA }
 <%# locals: () %>

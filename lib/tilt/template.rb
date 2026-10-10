@@ -250,6 +250,16 @@ module Tilt
     CLASS_METHOD = Kernel.instance_method(:class)
     USE_BIND_CALL = RUBY_VERSION >= '3'
 
+    # Matches an embedded fixed locals magic comment, which must start its
+    # line, with only comment syntax such as <tt>-</tt>, <tt>/</tt>, or
+    # <tt>#{</tt> before it.
+    FIXED_LOCALS_REGEXP = /^[^\w\n]*\#\s*locals:\s*(\(.*\))/
+
+    # Matches an embedded fixed locals magic comment in templates using ERB
+    # syntax, which must be the whole of an ERB comment tag.  The comment may
+    # span lines, but not continue past the end of its tag.
+    ERB_FIXED_LOCALS_REGEXP = /<%\#\s*locals:\s*(\((?:(?!%>).)*\))\s*-?%>/m
+
     # Execute the compiled template and return the result string. Template
     # evaluation is guaranteed to be performed in the scope object with the
     # locals specified and with support for yielding to the block.
@@ -531,9 +541,16 @@ module Tilt
     # surrounded by parentheses if there are fixed locals.  The method
     # argument string will be used when defining the template method if given.
     def extract_fixed_locals
-      if @data.is_a?(String) && (match = /\#\s*locals:\s*(\(.*\))/.match(@data))
+      if @data.is_a?(String) && (match = fixed_locals_regexp.match(@data))
         match[1]
       end
+    end
+
+    # The regexp used to find embedded fixed locals, capturing the method
+    # argument string.  Subclasses whose comment syntax allows a stricter
+    # match can override this.
+    def fixed_locals_regexp
+      FIXED_LOCALS_REGEXP
     end
 
     def extract_encoding(script, &block)

@@ -211,7 +211,10 @@ the form (whitespace around `locals:` is optional but recommended):
 # locals: ()
 ```
 
-In ERB templates, you can use the following comment format:
+The magic comment must start its line, with only comment syntax before it.
+
+In ERB templates (ERB, Erubi, and Herb), you can use the following comment
+format, which must be the whole of the comment tag, and may span lines:
 
 ```
 <%# locals: () %>

@@ -271,6 +271,13 @@ DATA
     assert_raises(ArgumentError) { template.render(nil, :something => true) }
   end
 
+  it "ignores the fixed locals syntax when it does not start its line" do
+    template = Tilt::StringTemplate.new { <<'DATA' }
+Declare with # locals: (name:)
+DATA
+    assert_equal "Declare with # locals: (name:)", template.render(nil).strip
+  end
+
   without_extract_fixed_locals "ignores embedded fixed locals when Tilt.extract_fixed_locals is false" do
     template = Tilt::StringTemplate.new { <<'DATA' }
 #{# locals: ()
